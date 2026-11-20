@@ -9,15 +9,18 @@ datasource db {
 
 enum ProductCategory {
   BEEF
+  PORK
+  VEAL
+  LAMB
   CHICKEN
+  POULTRY
   GAME
   FISH
-  POULTRY
-  DESSERT
   SHELLFISH
+  APPETIZERS
+  DESSERT
   SPECIALTY
   OTHER
-  APPETIZERS
 }
 
 model User {
@@ -96,9 +99,9 @@ model Verification {
 
 model Product {
   id        String          @id @default(cuid())
-  name      String
+  name      String          @unique
   category  ProductCategory @default(POULTRY)
-  cost      Decimal
+  cost      Decimal         @db.Decimal(10, 2)
   image     String?
   weight    String?
   createdAt DateTime        @default(now())
