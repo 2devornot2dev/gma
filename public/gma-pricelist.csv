@@ -1,0 +1,138 @@
+Product,Category,Price
+Bavette-natural,Beef,93.0
+Bavette-marinated,Beef,93.0
+Filet Mignon Bacon,Beef,129.0
+Filet Mignon Plain,Beef,124.0
+Filet Mignon Plain XL,Beef,131.0
+Tomahawk,Beef,122.0
+Tomahawk XL,Beef,137.0
+Rib Steak 14oz,Beef,126.0
+Ribeye 12 oz,Beef,129.0
+Ribeye 10oz,Beef,119.0
+New York 12 Oz,Beef,134.0
+New York 10 Oz,Beef,119.0
+New York-3 pepper,Beef,128.0
+Beef Roast,Beef,91.0
+Angus Burgers,Beef,61.0
+Beef Wellington,Beef,101.0
+Kobe Burgers,Beef,71.0
+Beef Brochettes,Beef,89.0
+Mixed Roast-trio,Beef,81.0
+T-Bone 16 oz,Beef,139.0
+Beef Cubes,Beef,66.0
+Ground Beef 87%,Beef,66.0
+Cooked Beef Roast,Beef,91.0
+Pork Chops-French cut,Pork,53.0
+Pork Chop-teriyaki,Pork,53.0
+Pork Chop- tomato basil,Pork,53.0
+Babyback Ribs-nat/cook,Pork,71.0
+Pork Tenderloin,Pork,61.0
+Osso Bucco-Milanese,Veal,91.0
+Pork Souvlaki,Pork,69.0
+Italian Sausages-mild/hot,Pork,51.0
+Coq-O-Porc,Pork,71.0
+Veal Chops-French cut,Veal,121.0
+Veal Tournedos,Veal,71.0
+Veal Cutlets,Veal,68.0
+Greek Lamb Chops,Lamb,79.0
+Lamb Chops,Lamb,74.0
+Rack of Lamb,Lamb,111.0
+Buffalo Medallions-bacon,Game,109.0
+Buffalo NY steaks,Game,109.0
+Buffalo/Deer (ground),Game,79.0
+Buffalo/Deer Burgers,Game,79.0
+Deer Medallions-bacon,Game,109.0
+Deer Steaks,Game,99.0
+Wild Boar Rack,Game,92.0
+Wild Boar Coq-o-Pork,Game,82.0
+Wild Boar Sausages,Game,71.0
+Wild Boar Bacon,Game,91.0
+Duck Magret,Poultry,76.0
+Duck Confit,Poultry,71.0
+Duck Sausages-foie gras,Poultry,81.0
+Game Sausages-trio,Game,71.0
+Chicken Kiev,Poultry,73.0
+Chicken Breast boneless,Poultry,64.0
+Chicken-honey garlic,Poultry,66.0
+Chicken- bbq,Poultry,66.0
+Chicken-Honey Mustard,Poultry,66.0
+Chicken Chorizo,Poultry,81.0
+Chicken Souvlaki,Poultry,69.0
+Chicken Provencal,Poultry,71.0
+Cordon Suisse,Poultry,51.0
+Broccoli Cheese,Poultry,51.0
+Florentine Feuilletes,Poultry,63.0
+Chicken Brie,Poultry,51.0
+Chicken Kabob marinated,Poultry,81.0
+Chicken Fingers,Poultry,39.0
+BBQ/Buffalo Wings,Poultry,39.0
+Chicken Wellington,Poultry,79.0
+Chicken Tournedos Trio,Poultry,79.0
+Saltimbocca,Poultry,81.0
+Ground Turkey,Poultry,71.0
+Turkey Roasts,Poultry,91.0
+Red Snapper,Fish,69.0
+Salmon Wellington,Fish,86.0
+Black Cod Filets,Fish,141.0
+Wild Cod Filets,Fish,26.0
+Wild Tuna Steaks,Fish,79.0
+Dore Filets,Fish,74.0
+Wild Salmon Filets,Fish,71.0
+Turbot Filets,Fish,67.0
+Wild Cod Loins,Fish,61.0
+Wild Haddock Loins,Fish,61.0
+Wild Trout Filets,Fish,69.0
+Sole Filets,Fish,51.0
+Grouper,Fish,46.0
+Smoked Salmon 3pp/bbq,Fish,94.0
+Wild Smoked Salmon,Fish,91.0
+Chilean Sea Bass,Fish,176.0
+Wild Arctic Char,Fish,89.0
+Orange Roughy,Fish,81.0
+Halibut Filets,Fish,117.0
+Scampies 10/20 XL,Shellfish & Seafood,154.0
+Scampies XLP,Shellfish & Seafood,101.0
+Japan Scallops XL,Shellfish & Seafood,119.0
+Scallops XXL,Shellfish & Seafood,124.0
+Scallops Medallions,Shellfish & Seafood,109.0
+Alaskan Snow Crab,Shellfish & Seafood,119.0
+Octopus,Shellfish & Seafood,101.0
+Shrimps P/D 8-12,Shellfish & Seafood,89.0
+Shrimps P/D 6-8,Shellfish & Seafood,121.0
+Shrimps P/D XL,Shellfish & Seafood,79.0
+Shrimps cooked,Shellfish & Seafood,73.0
+Salad Shrimps,Shellfish & Seafood,69.0
+BBQ Shrimps garlic/herb,Shellfish & Seafood,79.0
+Rose Butterfly Pink Shrimp,Shellfish & Seafood,79.0
+Rose P/D XL Shrimp,Shellfish & Seafood,71.0
+Frog Legs,Specialty,61.0
+Salmon Kabobs-maple,Fish,79.0
+Seafood Feuilletes,Prepared & Appetizers,61.0
+Lasagna (seafood),Prepared & Appetizers,76.0
+Stuffed Trout Supreme,Fish,79.0
+Lobster Tails XXL,Shellfish & Seafood,141.0
+Lobster Tails XL,Shellfish & Seafood,131.0
+Lobster Tails,Shellfish & Seafood,121.0
+Stuffed Sole shrimp/garlic,Fish,63.0
+Roulade Salmon spinach,Fish,81.0
+Coq St Jacques potatoes,Prepared & Appetizers,63.0
+Coq St. Jacques seafood,Prepared & Appetizers,63.0
+Escargots,Specialty,51.0
+Calamari,Shellfish & Seafood,48.0
+Almond Sole,Fish,69.0
+Cod-potato,Fish,69.0
+Beer Battered Cod,Fish,67.0
+Seafood Crepes,Prepared & Appetizers,66.0
+Crusted Salmon,Fish,71.0
+Hot Asian Canapes,Prepared & Appetizers,69.0
+Cold Canapes,Prepared & Appetizers,101.0
+Lobster Rolls,Prepared & Appetizers,69.0
+Cookies,Desserts,29.0
+Cheesecake,Desserts,39.0
+Pizza Fingers,Prepared & Appetizers,49.0
+Onion Soup,Prepared & Appetizers,39.0
+Gratin Dauphinois,Prepared & Appetizers,59.0
+Mini Phyllo Asst,Prepared & Appetizers,59.0
+Garlic Butter,Other,4.0
+Dry ice - full,Other,44.0
+Dry ice - half,Other,22.0

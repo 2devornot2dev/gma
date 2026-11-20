@@ -1,7 +1,9 @@
+// components/site/nav.tsx
 "use client";
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { Reveal } from "@/components/misc/reveal";
 import {
   Sheet,
   SheetClose,
@@ -21,7 +23,7 @@ const links = [
 function Logo() {
   return (
     <Link href="#top" className="flex items-center gap-3" aria-label="GMA home">
-      <span className="flex h-10 w-10 items-center justify-center bg-knicks font-display text-lg font-black text-white">
+      <span className="flex h-10 w-10 items-center justify-center bg-knicks font-display text-lg font-black text-white shadow-sm">
         G
       </span>
       <span className="font-display text-2xl font-black tracking-tight text-white">
@@ -33,26 +35,41 @@ function Logo() {
 
 export function Nav() {
   return (
-    <header className="absolute inset-x-0 top-0 z-30">
+    <Reveal
+      as="header"
+      trigger="mount"
+      y={-16}
+      duration={0.6}
+      className="absolute inset-x-0 top-0 z-30"
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-8">
         <Logo />
 
         <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
-          {links.map((l) => (
-            <Link
+          {links.map((l, idx) => (
+            <Reveal
               key={l.href}
-              href={l.href}
-              className="text-sm font-semibold uppercase tracking-widest text-white/80 hover:text-white"
+              trigger="mount"
+              y={-8}
+              delay={0.15 + idx * 0.05}
+              duration={0.5}
             >
-              {l.label}
-            </Link>
+              <Link
+                href={l.href}
+                className="text-xs font-bold uppercase tracking-[0.16em] text-white/80 transition-colors hover:text-white"
+              >
+                {l.label}
+              </Link>
+            </Reveal>
           ))}
-          <Link
-            href="#quote"
-            className="bg-knicks px-5 py-3 text-sm font-bold uppercase tracking-widest text-white hover:bg-knicks-600"
-          >
-            Get a Quote
-          </Link>
+          <Reveal trigger="mount" y={-8} delay={0.4} duration={0.5}>
+            <Link
+              href="#quote"
+              className="bg-knicks px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-knicks-600"
+            >
+              Get a Quote
+            </Link>
+          </Reveal>
         </nav>
 
         <Sheet>
@@ -105,6 +122,6 @@ export function Nav() {
           </SheetContent>
         </Sheet>
       </div>
-    </header>
+    </Reveal>
   );
 }

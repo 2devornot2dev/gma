@@ -1,59 +1,62 @@
-import Image from "next/image";
-import { Eyebrow } from "./eyebrow";
+// components/site/about.tsx
+import { Reveal } from "@/components/misc/reveal";
 
-const points = [
-  "Direct relationships with certified plants",
-  "Full export & customs documentation",
-  "Real-time container temperature tracking",
-  "Dedicated account managers per region",
+const stats = [
+  { value: "6", label: "Continents Served" },
+  { value: "100%", label: "Temperature Controlled" },
+  { value: "137+", label: "Wholesale Cuts & Products" },
+  { value: "24/7", label: "Cold-Chain Telemetry" },
 ];
 
 export function About() {
   return (
-    <section id="about" className="py-20 lg:py-28" aria-labelledby="about-title">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-8">
-        <div className="relative">
-          <div className="relative aspect-[4/3] w-full">
-            <Image
-              src="/img/coldstorage.png"
-              alt="GMA cold storage warehouse with racks of palletized frozen meat"
-              fill
-              sizes="(min-width: 1024px) 560px, 100vw"
-              className="object-cover"
+    <section id="about" className="bg-navy py-24 text-white sm:py-32">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-5">
+            {/* Draws orange line left-to-right on scroll */}
+            <Reveal
+              scaleX={0}
+              className="mb-6 h-1 w-20 origin-left bg-knicks"
             />
+            <Reveal delay={0.1}>
+              <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-knicks">
+                Operational Excellence
+              </span>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <h2 className="mt-2 font-display text-3xl font-black uppercase tracking-tight text-white sm:text-5xl">
+                Global Scale.
+                <br />
+                Strict Cold Chain.
+              </h2>
+            </Reveal>
           </div>
-          <div className="absolute -bottom-6 right-4 bg-knicks px-6 py-5 text-white lg:-right-6">
-            <p className="font-display text-3xl font-black">-18°C</p>
-            <p className="text-xs font-semibold uppercase tracking-widest">
-              Constant Cold Chain
-            </p>
-          </div>
-        </div>
 
-        <div>
-          <Eyebrow>Who We Are</Eyebrow>
-          <h2
-            id="about-title"
-            className="font-display text-3xl font-black uppercase leading-tight tracking-tight text-navy sm:text-5xl"
-          >
-            Built on Trust. Moved With Precision.
-          </h2>
-          <p className="mt-6 leading-relaxed text-steel">
-            For over two decades, GMA has connected certified producers with
-            distributors, retailers, and foodservice operators around the globe.
-            We manage every link: sourcing, inspection, documentation, freight,
-            and final-mile cold storage.
-          </p>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-            {points.map((p) => (
-              <li
-                key={p}
-                className="flex items-start gap-3 border-l-4 border-navy bg-steel-50 p-4 text-sm font-semibold text-steel-900"
-              >
-                {p}
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-col justify-between space-y-8 lg:col-span-7">
+            <Reveal delay={0.25}>
+              <p className="text-base leading-relaxed text-white/80 sm:text-lg">
+                GMA operates at the intersection of international livestock
+                producers and enterprise foodservice buyers. Every cut is tracked
+                from certified processing facilities through ocean containers to
+                final customs release without broken thermal links.
+              </p>
+            </Reveal>
+
+            {/* Staggered stats grid */}
+            <div className="grid grid-cols-2 gap-6 border-t border-white/10 pt-8 sm:grid-cols-4">
+              {stats.map((stat, i) => (
+                <Reveal key={stat.label} delay={0.3 + i * 0.08} y={16}>
+                  <div className="font-mono text-3xl font-black text-knicks sm:text-4xl">
+                    {stat.value}
+                  </div>
+                  <div className="mt-1 text-xs font-bold uppercase tracking-wider text-steel-300">
+                    {stat.label}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

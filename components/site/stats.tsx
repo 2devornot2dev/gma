@@ -1,3 +1,5 @@
+import { CountUp } from "@/components/misc/count-up";
+import { Reveal } from "@/components/misc/reveal";
 import { cn } from "@/lib/utils";
 
 const stats = [
@@ -28,9 +30,11 @@ export function Stats() {
   return (
     <section aria-label="Company at a glance" className="bg-navy">
       <dl className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
-        {stats.map((s) => (
-          <div
+        {stats.map((s, idx) => (
+          <Reveal
             key={s.label}
+            delay={idx * 0.08}
+            y={16}
             className={cn("px-5 py-8 lg:px-8 lg:py-10", s.cell)}
           >
             <dt className="text-xs font-semibold uppercase tracking-widest text-white/60">
@@ -42,9 +46,9 @@ export function Stats() {
                 s.accent ? "text-knicks" : "text-white",
               )}
             >
-              {s.value}
+              <CountUp value={s.value} />
             </dd>
-          </div>
+          </Reveal>
         ))}
       </dl>
     </section>

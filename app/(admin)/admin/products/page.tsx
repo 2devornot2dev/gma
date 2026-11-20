@@ -1,35 +1,31 @@
-// app/products/page.tsx
+// app/(admin)/admin/products/page.tsx
+import { Suspense } from "react";
 import Link from "next/link";
 import { Download, Layers, Package, Plus, Sparkles } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { getProducts } from "@/lib/actions/get-products";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { PageHeader } from "@/components/misc/page-header";
 import { ProductTable } from "@/components/products/product-table";
-import type { ProductRow } from "@/components/products/product-table/types";
 
-export const dynamic = "force-dynamic";
+export default function ProductsPage() {
+  return (
+    <div className="min-h-screen bg-steel-50">
+      <Suspense fallback={<ProductsPageSkeleton />}>
+        <ProductsContent />
+      </Suspense>
+    </div>
+  );
+}
 
-export default async function ProductsPage() {
-  const dbProducts = await prisma.product.findMany({
-    orderBy: [{ category: "asc" }, { name: "asc" }],
-  });
-
-  const products: ProductRow[] = dbProducts.map((p) => ({
-    id: p.id,
-    name: p.name,
-    category: p.category,
-    cost: Number(p.cost),
-    image: p.image,
-    weight: p.weight,
-    updatedAt: p.updatedAt.toISOString(),
-  }));
+async function ProductsContent() {
+  const products = await getProducts();
 
   const categoryCount = new Set(products.map((p) => p.category)).size;
   const withImagesCount = products.filter((p) => Boolean(p.image)).length;
 
   return (
-    <div className="min-h-screen bg-steel-50">
+    <>
       <PageHeader
         eyebrow="GMA Wholesale Catalog"
         title="Products & Pricing"
@@ -68,7 +64,7 @@ export default async function ProductsPage() {
               Download CSV
             </a>
             <Link
-              href="/products/new"
+              href="/admin/products/new"
               className={cn(
                 buttonVariants(),
                 "bg-knicks text-xs font-bold uppercase tracking-widest text-white hover:bg-knicks-600"
@@ -84,6 +80,44 @@ export default async function ProductsPage() {
       <main className="mx-auto w-full max-w-7xl px-5 py-8 lg:px-8">
         <ProductTable initialProducts={products} />
       </main>
-    </div>
+    </>
+  );
+}
+
+function ProductsPageSkeleton() {
+  return (
+    <>
+      <div className="border-b border-steel-100 bg-navy">
+        <div className="h-1 w-full bg-knicks" />
+        <div className="mx-auto max-w-7xl space-y-4 px-5 py-10 lg:px-8">
+          <div className="h-3 w-40 animate-pulse rounded bg-white/15" />
+          <div className="h-9 w-72 animate-pulse rounded bg-white/20" />
+          <div className="h-4 w-96 max-w-full animate-pulse rounded bg-white/10" />
+          <div className="flex gap-2 pt-2">
+            <div className="h-6 w-28 animate-pulse rounded bg-white/15" />
+            <div className="h-6 w-28 animate-pulse rounded bg-white/15" />
+            <div className="h-6 w-36 animate-pulse rounded bg-knicks/40" />
+          </div>
+        </div>
+      </div>
+
+      <main className="mx-auto w-full max-w-7xl px-5 py-8 lg:px-8">
+        <div className="overflow-hidden rounded-lg border border-steel-300/70 bg-white shadow-sm">
+          <div className="border-b border-steel-100 bg-steel-50/70 p-4">
+            <div className="h-9 w-72 animate-pulse rounded bg-steel-100" />
+          </div>
+          <div className="divide-y divide-steel-100 p-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 py-3.5">
+                <div className="h-14 w-14 animate-pulse rounded-md bg-steel-100" />
+                <div className="h-4 w-48 animate-pulse rounded bg-steel-100" />
+                <div className="h-5 w-24 animate-pulse rounded bg-steel-100" />
+                <div className="ml-auto h-4 w-16 animate-pulse rounded bg-steel-100" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    </>
   );
 }

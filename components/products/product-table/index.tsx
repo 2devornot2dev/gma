@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import type { ProductCategory } from "@/lib/generated/prisma/client";
-import { buildProductColumns } from "./columns";
+import { productColumns } from "./columns";
 import { productTableFeatures } from "./features";
 import { ProductTableToolbar } from "./toolbar";
 import type { ProductRow } from "./types";
@@ -28,57 +28,23 @@ interface ProductTableProps {
 }
 
 export function ProductTable({ initialProducts }: ProductTableProps) {
-  const [products, setProducts] = React.useState<ProductRow[]>(initialProducts);
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "name", desc: false },
   ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [generatingIds, setGeneratingIds] = React.useState<
-    Record<string, boolean>
-  >({});
 
   const availableCategories = React.useMemo(() => {
     const set = new Set<ProductCategory>();
-    for (const p of products) set.add(p.category);
+    for (const p of initialProducts) set.add(p.category);
     return Array.from(set);
-  }, [products]);
-
-  const handleGenerateImage = React.useCallback(async (product: ProductRow) => {
-    setGeneratingIds((prev) => ({ ...prev, [product.id]: true }));
-    try {
-      const res = await fetch(`/api/products/${product.id}/generate-image`, {
-        method: "POST",
-      });
-      if (!res.ok) throw new Error("Failed to generate image");
-      const data: { id: string; image: string } = await res.json();
-
-      setProducts((prev) =>
-        prev.map((item) =>
-          item.id === data.id ? { ...item, image: data.image } : item
-        )
-      );
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setGeneratingIds((prev) => ({ ...prev, [product.id]: false }));
-    }
-  }, []);
-
-  const columns = React.useMemo(
-    () =>
-      buildProductColumns({
-        generatingIds,
-        onGenerateImage: handleGenerateImage,
-      }),
-    [generatingIds, handleGenerateImage]
-  );
+  }, [initialProducts]);
 
   const table = useTable({
     features: productTableFeatures,
-    data: products,
-    columns,
+    data: initialProducts,
+    columns: productColumns,
     state: {
       sorting,
       columnFilters,
@@ -94,7 +60,7 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
   });
 
   return (
-    <div className="overflow-hidden rounded-lg border border-steel-100 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-steel-300/70 bg-white shadow-sm">
       <ProductTableToolbar
         table={table}
         availableCategories={availableCategories}
@@ -102,14 +68,17 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
 
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-steel-50">
+          <TableHeader className="border-b-2 border-steel-300/80 bg-steel-100/90">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className="border-steel-100 hover:bg-transparent"
+                className="border-none hover:bg-transparent"
               >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="h-11 text-xs">
+                  <TableHead
+                    key={header.id}
+                    className="h-12 text-xs font-extrabold uppercase tracking-wider text-navy"
+                  >
                     {header.isPlaceholder ? null : (
                       <table.FlexRender header={header} />
                     )}
@@ -124,10 +93,10 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="border-steel-100 transition-colors hover:bg-steel-50/70"
+                  className="border-b border-steel-100 odd:bg-white even:bg-steel-50/90 transition-colors hover:bg-knicks/10"
                 >
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-3">
+                    <TableCell key={cell.id} className="py-3.5">
                       <table.FlexRender cell={cell} />
                     </TableCell>
                   ))}
@@ -136,7 +105,7 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={productColumns.length}
                   className="h-32 text-center text-sm text-steel"
                 >
                   No products match your current filters.
@@ -148,8 +117,8 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
       </div>
 
       {/* Pagination Footer */}
-      <div className="flex flex-col items-center justify-between gap-3 border-t border-steel-100 bg-steel-50/50 px-4 py-3 sm:flex-row">
-        <p className="text-xs font-medium text-steel">
+      <div className="flex flex-col items-center justify-between gap-3 border-t border-steel-300/70 bg-steel-100/60 px-4 py-3.5 sm:flex-row">
+        <p className="text-xs font-semibold text-steel-700">
           Page{" "}
           <strong className="font-mono text-navy">
             {table.state.pagination.pageIndex + 1}
@@ -167,7 +136,7 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="border-steel-300 text-steel-900 hover:border-navy hover:text-navy"
+            className="border-steel-300 bg-white text-steel-900 hover:border-navy hover:text-navy"
           >
             <ChevronLeft className="mr-1 h-4 w-4" />
             Previous
@@ -178,7 +147,7 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="border-steel-300 text-steel-900 hover:border-navy hover:text-navy"
+            className="border-steel-300 bg-white text-steel-900 hover:border-navy hover:text-navy"
           >
             Next
             <ChevronRight className="ml-1 h-4 w-4" />

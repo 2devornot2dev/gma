@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Reveal } from "@/components/misc/reveal";
 import { Eyebrow } from "./eyebrow";
 
 const products = [
@@ -38,23 +39,34 @@ export function Products() {
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="max-w-2xl">
-            <Eyebrow>Our Products</Eyebrow>
-            <h2
-              id="products-title"
-              className="font-display text-3xl font-black uppercase leading-tight tracking-tight text-navy sm:text-5xl"
-            >
-              Premium Protein. Every Category.
-            </h2>
+            <Reveal delay={0.1}>
+              <Eyebrow>Our Products</Eyebrow>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <h2
+                id="products-title"
+                className="font-display text-3xl font-black uppercase leading-tight tracking-tight text-navy sm:text-5xl"
+              >
+                Premium Protein. Every Category.
+              </h2>
+            </Reveal>
           </div>
-          <p className="max-w-md leading-relaxed text-steel">
-            Fresh, chilled, and frozen. Bulk boxed, retail-ready, or custom-cut
-            to specification.
-          </p>
+          <Reveal delay={0.3}>
+            <p className="max-w-md leading-relaxed text-steel">
+              Fresh, chilled, and frozen. Bulk boxed, retail-ready, or custom-cut
+              to specification.
+            </p>
+          </Reveal>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {products.map((p) => (
-            <article key={p.name} className="group bg-white">
+          {products.map((p, i) => (
+            <Reveal
+              key={p.name}
+              as="article"
+              delay={0.15 + i * 0.1}
+              className="group bg-white"
+            >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
                   src={p.image}
@@ -75,7 +87,7 @@ export function Products() {
                   {p.cuts}
                 </p>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>

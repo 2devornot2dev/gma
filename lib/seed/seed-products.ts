@@ -1,4 +1,4 @@
-// prisma/seed.ts
+// lib/seed/seed-products.ts
 import "dotenv/config";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -7,13 +7,8 @@ import {
   PrismaClient,
   ProductCategory,
 } from "@/lib/generated/prisma/client";
-import {
-  generateAndSaveProductImage,
-  slugifyProductName,
-} from "@/lib/replicate";
-
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const prisma = new PrismaClient({ adapter });
+import { deleteAllByPrefix } from "@/lib/aws/s3";
+import { generateAndSaveProductImage } from "@/lib/replicate";
 
 const CATEGORY_MAP: Record<string, ProductCategory> = {
   beef: ProductCategory.BEEF,
@@ -46,7 +41,6 @@ function parseCsv(content: string) {
     .map((line) => line.trim())
     .filter(Boolean);
 
-  // Skip header row
   return lines.slice(1).map((line) => {
     const [rawName, rawCategory, rawPrice] = line.split(",");
     const name = rawName.trim();
@@ -66,99 +60,108 @@ function parseCsv(content: string) {
   });
 }
 
-async function fileExists(filePath: string) {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
+function parseLimit(): number | undefined {
+  const arg = process.argv.find((a) => a.startsWith("--limit="));
+  if (!arg) return undefined;
+  const n = Number(arg.split("=")[1]);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
 }
 
 async function main() {
-  const shouldGenerateImages =
-    process.argv.includes("--images") || process.env.SEED_IMAGES === "true";
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("Missing DATABASE_URL in .env");
+  }
 
-  const csvPath = path.join(process.cwd(), "public", "gma-pricelist.csv");
-  const csvContent = await fs.readFile(csvPath, "utf-8");
-  const rows = parseCsv(csvContent);
+  const connectionString = databaseUrl.replace(
+    "sslmode=require",
+    "sslmode=verify-full"
+  );
+  const adapter = new PrismaPg({ connectionString });
+  const prisma = new PrismaClient({ adapter });
 
-  console.log(`Seeding ${rows.length} products from public/gma-pricelist.csv...`);
+  try {
+    const skipImages = process.argv.includes("--skip-images");
+    const limit = parseLimit();
 
-  for (const row of rows) {
-    const localFilename = `${slugifyProductName(row.name)}.jpg`;
-    const localAbsPath = path.join(
-      process.cwd(),
-      "public",
-      "images",
-      "products",
-      localFilename
-    );
-    const hasLocalImage = await fileExists(localAbsPath);
+    console.log("[Seed] Deleting all existing products from database...");
+    const { count: deletedRows } = await prisma.product.deleteMany();
+    console.log(`[Seed] Deleted ${deletedRows} existing DB product row(s).`);
 
-    await prisma.product.upsert({
-      where: { name: row.name },
-      update: {
-        category: row.category,
-        cost: row.cost,
-        weight: row.weight,
-        ...(hasLocalImage ? { image: `/images/products/${localFilename}` } : {}),
-      },
-      create: {
-        name: row.name,
-        category: row.category,
-        cost: row.cost,
-        weight: row.weight,
-        image: hasLocalImage ? `/images/products/${localFilename}` : null,
-      },
+    console.log('[Seed] Deleting all existing S3 objects under "products/"...');
+    await deleteAllByPrefix("products/");
+
+    const csvPath = path.join(process.cwd(), "public", "gma-pricelist.csv");
+    const csvContent = await fs.readFile(csvPath, "utf-8");
+    const rows = parseCsv(csvContent);
+
+    console.log(`[Seed] Inserting ${rows.length} products from CSV...`);
+    await prisma.product.createMany({ data: rows });
+    console.log(`[Seed] Inserted ${rows.length} products.`);
+
+    if (skipImages) {
+      console.log("[Seed] --skip-images passed, stopping before Replicate.");
+      return;
+    }
+
+    const targets = await prisma.product.findMany({
+      orderBy: { name: "asc" },
+      ...(limit ? { take: limit } : {}),
     });
-  }
 
-  console.log("Database seed complete.");
-
-  if (!shouldGenerateImages) {
     console.log(
-      "Skipping Replicate image generation. Pass --images to generate missing product images."
+      `[Seed] Starting Replicate image generation for ${targets.length} product(s)...`
     );
-    return;
-  }
 
-  const missingImages = await prisma.product.findMany({
-    where: { image: null },
-    orderBy: { name: "asc" },
-  });
+    const BATCH_SIZE = 3;
+    let succeeded = 0;
+    let failed = 0;
 
-  console.log(`Generating images for ${missingImages.length} products...`);
+    for (let i = 0; i < targets.length; i += BATCH_SIZE) {
+      const batch = targets.slice(i, i + BATCH_SIZE);
+      console.log(
+        `\n[Seed] --- Batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(targets.length / BATCH_SIZE)} ---`
+      );
 
-  // Process in small batches of 3 to avoid rate limits
-  const BATCH_SIZE = 3;
-  for (let i = 0; i < missingImages.length; i += BATCH_SIZE) {
-    const batch = missingImages.slice(i, i + BATCH_SIZE);
-    await Promise.all(
-      batch.map(async (product) => {
-        try {
-          const imagePath = await generateAndSaveProductImage(
-            product.name,
-            product.category
-          );
-          await prisma.product.update({
-            where: { id: product.id },
-            data: { image: imagePath },
-          });
-          console.log(`✓ Generated image for "${product.name}" -> ${imagePath}`);
-        } catch (err) {
-          console.error(`✗ Failed for "${product.name}":`, err);
-        }
-      })
+      await Promise.all(
+        batch.map(async (product) => {
+          try {
+            const { key } = await generateAndSaveProductImage(
+              product.name,
+              product.category
+            );
+            await prisma.product.update({
+              where: { id: product.id },
+              data: { image: key },
+            });
+            succeeded++;
+            console.log(
+              `[Seed] [${succeeded + failed}/${targets.length}] ✓ Saved ${product.name} -> ${key}`
+            );
+          } catch (err) {
+            failed++;
+            console.error(
+              `[Seed] [${succeeded + failed}/${targets.length}] ✗ FAILED ${product.name}:`,
+              err
+            );
+          }
+        })
+      );
+
+      if (i + BATCH_SIZE < targets.length) {
+        await new Promise((r) => setTimeout(r, 500));
+      }
+    }
+
+    console.log(
+      `\n[Seed] Finished. Succeeded: ${succeeded}/${targets.length} | Failed: ${failed}`
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-main()
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((err) => {
+  console.error("[Seed] Fatal error:", err);
+  process.exit(1);
+});

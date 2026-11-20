@@ -3,38 +3,45 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateAndSaveProductImage } from "@/lib/replicate";
 
-export async function POST(
-  _req: Request,
-  context: { params: Promise<{ productId: string }> }
-) {
+interface Params {
+  params: Promise<{
+    productId: string;
+  }>;
+}
+
+export async function POST(_req: Request, { params }: Params) {
   try {
-    const { productId } = await context.params;
-    const product = await prisma.product.findUnique({ where: { id: productId } });
+    const { productId } = await params;
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    const imagePath = await generateAndSaveProductImage(
+    const { key, url } = await generateAndSaveProductImage(
       product.name,
-      product.category
+      product.category,
     );
 
-    // Cache-bust query param so browser refreshes updated images immediately
-    const updated = await prisma.product.update({
+    // Store the permanent S3 key in Postgres
+    await prisma.product.update({
       where: { id: product.id },
-      data: { image: imagePath },
+      data: { image: key },
     });
 
+    // Return the resolved/presigned URL so the table updates immediately
     return NextResponse.json({
-      id: updated.id,
-      image: `${imagePath}?v=${Date.now()}`,
+      id: product.id,
+      key,
+      image: url,
     });
   } catch (error) {
-    console.error("Image generation failed:", error);
+    console.error("Admin product image generation failed:", error);
     return NextResponse.json(
       { error: "Failed to generate product image" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

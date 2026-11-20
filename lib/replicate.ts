@@ -1,7 +1,7 @@
 // lib/replicate.ts
-import fs from "node:fs/promises";
-import path from "node:path";
+
 import type { ProductCategory } from "@/lib/generated/prisma/client";
+import { uploadFromUrl, type UploadResult } from "@/lib/aws/s3";
 
 export const REPLICATE_API_URL =
   "https://api.replicate.com/v1/models/prunaai/flux-fast/predictions";
@@ -137,23 +137,18 @@ export async function callReplicate(
  * Generates an image via Replicate and persists it to /public/images/products/<slug>.jpg
  * Returns the public relative path for storing in Prisma (e.g. "/images/products/tomahawk.jpg").
  */
+// lib/replicate.ts (replace generateAndSaveProductImage at the bottom)
+
+
 export async function generateAndSaveProductImage(
   productName: string,
   category: ProductCategory
-): Promise<string> {
+): Promise<UploadResult> {
   const prompt = buildProductImagePrompt(productName, category);
   const remoteUrl = await callReplicate({ prompt });
 
-  const imgRes = await fetch(remoteUrl);
-  if (!imgRes.ok) {
-    throw new Error(`Failed to download generated image (${imgRes.status})`);
-  }
+  const slug = slugifyProductName(productName);
+  const key = `products/${slug}.jpg`;
 
-  const buffer = Buffer.from(await imgRes.arrayBuffer());
-  const filename = `${slugifyProductName(productName)}.jpg`;
-  const outputDir = path.join(process.cwd(), "public", "images", "products");
-  await fs.mkdir(outputDir, { recursive: true });
-  await fs.writeFile(path.join(outputDir, filename), buffer);
-
-  return `/images/products/${filename}`;
+  return uploadFromUrl(remoteUrl, key, "image/jpeg");
 }
