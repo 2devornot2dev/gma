@@ -2,13 +2,11 @@
 "use client";
 
 import * as React from "react";
-import { usePathname } from "next/navigation";
 import { MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChatPanel } from "./chat-panel";
 
 export function ChatWidget() {
-  const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
   const panelRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -48,9 +46,6 @@ export function ChatWidget() {
     };
   }, [open]);
 
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
 
   return (
     <>

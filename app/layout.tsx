@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Archivo, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ChatWidget } from "@/components/chat/chat-widget";
+
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -39,7 +39,7 @@ export default function RootLayout({
     >
       <body className="bg-white font-sans text-steel-900 antialiased">
         {children}
-        <ChatWidget />
+       
       </body>
     </html>
   );
