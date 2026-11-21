@@ -8,7 +8,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-svh items-end overflow-hidden bg-black lg:items-center"
+      className="relative flex min-h-svh items-center overflow-hidden bg-black"
       aria-labelledby="hero-title"
     >
       <Image
@@ -21,7 +21,7 @@ export function Hero() {
       />
       <div className="hero-fade absolute inset-0" aria-hidden="true" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-14 pt-40 lg:px-8 lg:py-32">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-14 pt-28 lg:px-8 lg:py-32">
         <div className="max-w-2xl">
           <Reveal trigger="mount" delay={0.1} y={16}>
             <Eyebrow className="mb-6">Global Meat Import &amp; Export</Eyebrow>

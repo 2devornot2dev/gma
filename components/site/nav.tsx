@@ -20,6 +20,9 @@ const links = [
   { href: "#quality", label: "Quality" },
 ];
 
+// TODO: testing shortcut. Remove or swap for "/products" once admin auth is in place.
+const ADMIN_PRODUCTS_HREF = "/admin/products";
+
 function Logo() {
   return (
     <Link href="#top" className="flex items-center gap-3" aria-label="GMA home">
@@ -70,10 +73,10 @@ export function Nav() {
               Get a Quote
             </Link>
           </Reveal>
-           <Reveal trigger="mount" y={-8} delay={0.4} duration={0.5}>
+          <Reveal trigger="mount" y={-8} delay={0.45} duration={0.5}>
             <Link
-              href="/admin/products"
-              className="bg-knicks px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-knicks-600"
+              href={ADMIN_PRODUCTS_HREF}
+              className="border border-white/40 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:border-white hover:bg-white hover:text-navy"
             >
               View Products
             </Link>
@@ -125,6 +128,17 @@ export function Nav() {
                 }
               >
                 Get a Quote
+              </SheetClose>
+              <SheetClose
+                nativeButton={false}
+                render={
+                  <Link
+                    href={ADMIN_PRODUCTS_HREF}
+                    className="mt-3 border border-white/40 py-4 text-center font-bold uppercase tracking-widest text-white"
+                  />
+                }
+              >
+                View Products
               </SheetClose>
             </nav>
           </SheetContent>
