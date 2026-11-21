@@ -70,6 +70,14 @@ export function Nav() {
               Get a Quote
             </Link>
           </Reveal>
+           <Reveal trigger="mount" y={-8} delay={0.4} duration={0.5}>
+            <Link
+              href="/admin/products"
+              className="bg-knicks px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-knicks-600"
+            >
+              View Products
+            </Link>
+          </Reveal>
         </nav>
 
         <Sheet>
