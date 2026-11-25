@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Reveal } from "@/components/misc/reveal";
 import { Eyebrow } from "./eyebrow";
 
+const ADMIN_PRODUCTS_HREF = "/admin/products";
+
 export function Hero() {
   return (
     <section
@@ -54,7 +56,7 @@ export function Hero() {
                 Request a Quote
               </Link>
               <Link
-                href="/products"
+                href={ADMIN_PRODUCTS_HREF}
                 className="border border-white/40 px-8 py-4 text-center text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:border-white hover:bg-white hover:text-navy"
               >
                 View Products
